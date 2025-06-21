@@ -1,7 +1,7 @@
 package com.marine.manage.Controller;
 
 import cn.dev33.satoken.stp.StpUtil;
-import com.marine.manage.mapper.LesssonMapper;
+import com.marine.manage.mapper.LessonMapper;
 import com.marine.manage.pojo.Lesson;
 import com.marine.manage.pojo.Result;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class LessonController {
-    private final LesssonMapper lesssonMapper;
+    private final LessonMapper lesssonMapper;
 
     @GetMapping("/lessons")
     public Result<List<Lesson>> getAllLessons() {

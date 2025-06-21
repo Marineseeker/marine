@@ -20,13 +20,22 @@ public class MethodTimingAspect {
     @Pointcut("@annotation(com.marine.manage.annotaion.TrackTime)")
     public void timePointCut(){}
 
+    /**
+     * 环绕通知
+     * &#064;Around 注解定义环绕通知
+     * 该方法会在切点方法执行前后执行
+     * @param joinPoint 切点连接点
+     * @return 返回切点方法的执行结果
+     * @throws Throwable 抛出异常
+     * 环绕必须返回 Object 类型
+     */
     @Around("timePointCut()")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         String methodName = joinPoint.getSignature().getName();
 
         logger.info("method {} start", methodName);
         long startTime = System.currentTimeMillis();
-        Object result = null;
+        Object result;
         try {
             result = joinPoint.proceed();
         }catch (Throwable throwable) {
