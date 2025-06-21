@@ -24,7 +24,6 @@ public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-
     @GetMapping("/userlist")
     public List<User> getAllUsers() {
         return userMapper.getAllUsers();

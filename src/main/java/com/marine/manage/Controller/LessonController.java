@@ -1,6 +1,5 @@
 package com.marine.manage.Controller;
 
-import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.stp.StpUtil;
 import com.marine.manage.mapper.LesssonMapper;
 import com.marine.manage.pojo.Lesson;
@@ -21,7 +20,7 @@ public class LessonController {
         List<Lesson> lessons = lesssonMapper.getAllLessons();
         return Result.success(lessons);
     }
-
+    
     @GetMapping("/mylessons")
     public Result<List<Lesson>> getMyLessons() {
         if (!StpUtil.isLogin()) {
