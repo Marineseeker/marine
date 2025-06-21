@@ -1,6 +1,7 @@
 package com.marine.manage.Controller;
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.marine.manage.annotaion.TrackTime;
 import com.marine.manage.mapper.UserMapper;
 import com.marine.manage.pojo.Result;
 import com.marine.manage.pojo.User;
@@ -29,6 +30,7 @@ public class UserController {
         return userMapper.getAllUsers();
     }
 
+    @TrackTime
     @PostMapping("/login")
     public Result<Map<String, Object>> login(@RequestBody @Valid LoginRequest loginRequest) {
         String email = loginRequest.getEmail();
