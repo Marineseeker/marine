@@ -31,7 +31,6 @@
     </properties>
 
     <dependencies>
-
         <!-- Spring 分析器 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -19,7 +19,6 @@ public class MethodTimingAspect {
      */
     @Pointcut("@annotation(com.marine.manage.annotaion.TrackTime)")
     public void timePointCut(){}
-
     /**
      * 环绕通知
      * &#064;Around 注解定义环绕通知
