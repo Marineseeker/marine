@@ -4,7 +4,10 @@ spring:
     username: root
     password: Marine1235689412
     driver-class-name: com.mysql.cj.jdbc.Driver
-
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 sa-token:
   # token 名称
