@@ -41,7 +41,10 @@ public class LessonController {
 
         // 设置过期时间为一个小时
         // 键值对形如  mylessons:1 ==> [Lesson1, Lesson2, ...]
-        redisTemplate.opsForValue().set(redisKey, mylessons, 1, java.util.concurrent.TimeUnit.HOURS);
+        redisTemplate.opsForValue().set(redisKey,
+                mylessons,
+                1,
+                java.util.concurrent.TimeUnit.HOURS);
         return Result.success(mylessons);
     }
 }
