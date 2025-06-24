@@ -20,7 +20,6 @@ public class LessonService {
     /**
      * 获取所有课程 - 只读事务
      */
-    @Transactional(readOnly = true)
     public List<Lesson> getAllLessons() {
         log.info("获取所有课程信息");
         return lessonMapper.getAllLessons();
@@ -29,7 +28,6 @@ public class LessonService {
     /**
      * 根据用户ID获取课程 - 只读事务
      */
-    @Transactional(readOnly = true)
     public List<Lesson> getLessonsByUserId(int userId) {
         log.info("获取用户课程信息，用户ID: {}", userId);
         return lessonMapper.getLessonsByUserId(userId);

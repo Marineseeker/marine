@@ -24,7 +24,6 @@ public class UserService {
     /**
      * 获取所有用户 - 只读事务
      */
-    @Transactional(readOnly = true)
     public List<User> getAllUsers() {
         log.info("获取所有用户信息");
         return userMapper.getAllUsers();
@@ -33,7 +32,6 @@ public class UserService {
     /**
      * 用户登录 - 只读事务
      */
-    @Transactional(readOnly = true)
     public Map<String, Object> login(LoginRequest loginRequest) {
         String email = loginRequest.getEmail();
         String password = loginRequest.getPassword();
