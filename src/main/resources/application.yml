@@ -8,7 +8,6 @@ spring:
     redis:
       host: localhost
       port: 6379
-
 sa-token:
   # token 名称
   token-name: satoken
@@ -24,3 +23,6 @@ sa-token:
   token-style: uuid
   # 是否输出操作日志
   is-log: true
+
+# server:
+#    port: 9090

@@ -1,5 +1,6 @@
 package com.marine.manage.Controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.stp.StpUtil;
 import com.marine.manage.annotaion.TrackTime;
 import com.marine.manage.pojo.Lesson;
@@ -94,6 +95,7 @@ public class LessonController {
     /**
      * 删除课程 - 演示事务回滚
      */
+    @SaCheckPermission("DELETE")
     @DeleteMapping("/lessons/{lessonId}")
     public Result<String> deleteLesson(@PathVariable int lessonId) {
         try {

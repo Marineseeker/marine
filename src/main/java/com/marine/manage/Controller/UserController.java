@@ -1,5 +1,6 @@
 package com.marine.manage.Controller;
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import com.marine.manage.annotaion.TrackTime;
 import com.marine.manage.pojo.Result;
 import com.marine.manage.pojo.User;
@@ -63,6 +64,7 @@ public class UserController {
     /**
      * 演示批量用户操作的事务
      */
+    @SaCheckRole("/admin")
     @PostMapping("/batch-operation")
     public Result<String> batchUserOperation() {
         try {
