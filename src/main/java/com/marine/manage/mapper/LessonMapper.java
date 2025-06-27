@@ -28,4 +28,7 @@ public interface LessonMapper {
 
     @Delete("DELETE FROM lessons WHERE id = #{lessonId}")
     void deleteLesson(int lessonId);
+
+    @Delete("DELETE FROM user_lessons WHERE lesson_id = #{lessonId}")
+    void deleteUserLessonRefs(int lessonId);
 }

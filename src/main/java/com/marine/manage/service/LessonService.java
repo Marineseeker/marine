@@ -1,5 +1,6 @@
 package com.marine.manage.service;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.marine.manage.mapper.LessonMapper;
 import com.marine.manage.pojo.Lesson;
 import lombok.RequiredArgsConstructor;
@@ -143,6 +144,8 @@ public class LessonService {
     /**
      * 删除课程 - 演示事务回滚
      */
+
+    @SaCheckPermission("DELETE")
     @Transactional
     public String deleteLesson(int lessonId) {
         log.info("删除课程，ID: {}", lessonId);
@@ -164,6 +167,9 @@ public class LessonService {
         }
         
         // 删除课程 - 需要扩展LessonMapper接口
+        // 先删除用户与课程的关联
+        lessonMapper.deleteUserLessonRefs(lessonId);
+        // 然后删除课程本身
         lessonMapper.deleteLesson(lessonId);
         
         log.info("课程删除成功，ID: {}", lessonId);

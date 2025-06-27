@@ -21,7 +21,6 @@ public class StpInterfaceImpl implements StpInterface {
         int userId = Integer.parseInt(loginId.toString());
         return authenticationMapper.getPermissionList(userId);
     }
-
     /**
      * 返回一个账号所拥有的角色标识集合 (权限与角色可分开校验)
      */
