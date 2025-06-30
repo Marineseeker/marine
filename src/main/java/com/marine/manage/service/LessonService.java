@@ -34,6 +34,15 @@ public class LessonService {
         return lessonMapper.getLessonsByUserId(userId);
     }
 
+    public Lesson getLessonById(int id) {
+        log.info("获取课程信息，ID: {}", id);
+        Lesson lesson = lessonMapper.getLessonById(id);
+        if (lesson == null) {
+            throw new RuntimeException("课程不存在，ID: " + id);
+        }
+        return lesson;
+    }
+
     /**
      * 创建课程 - 演示事务的原子性
      */
@@ -81,7 +90,6 @@ public class LessonService {
                 throw new RuntimeException("批量创建课程失败，第" + (i + 1) + "个课程失败", e);
             }
         }
-        
         log.info("批量创建课程完成");
     }
 
@@ -176,6 +184,7 @@ public class LessonService {
         return "课程删除成功: " + targetLesson.getTitle();
     }
 
+
     /**
      * 复杂业务操作 - 演示嵌套事务
      */
@@ -219,4 +228,5 @@ public class LessonService {
         
         log.info("额外操作执行成功");
     }
-} 
+
+}

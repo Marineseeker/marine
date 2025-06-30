@@ -1,6 +1,7 @@
 package com.marine.manage.Controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.stp.StpUtil;
 import com.marine.manage.annotaion.TrackTime;
 import com.marine.manage.pojo.Lesson;
@@ -18,6 +19,7 @@ public class LessonController {
     private final LessonService lessonService;
     private final RedisTemplate<String, Object> redisTemplate;
 
+    @SaCheckRole("admin")
     @GetMapping("/lessons")
     public Result<List<Lesson>> getAllLessons() {
         try {
@@ -53,6 +55,17 @@ public class LessonController {
         return Result.success(mylessons);
     }
 
+    @TrackTime
+    @GetMapping("/lessons/{id}")
+    public Result<Lesson> getLessonById(@PathVariable int id) {
+        try{
+            Lesson lesson = lessonService.getLessonById(id);
+            return Result.success(lesson);
+        } catch (RuntimeException e) {
+            return Result.error(e.getMessage());
+        }
+    }
+
     /**
      * 创建课程 - 演示事务
      */
@@ -69,6 +82,7 @@ public class LessonController {
     /**
      * 批量创建课程 - 演示事务传播和回滚
      */
+    @SaCheckPermission("CREATE")
     @PostMapping("/lessons/batch")
     public Result<String> batchCreateLessons(@RequestBody List<Lesson> lessons) {
         try {
