@@ -11,6 +11,10 @@ public class TypHandler {
         public ListChapter() {
             super(List.class);
         }
+
+        public ListChapter(Class<?> type) {
+            super(type);
+        }
         
         @Override
         public List<Chapter> parse(String json) {
@@ -32,6 +36,10 @@ public class TypHandler {
     public static class ListString extends AbstractJsonTypeHandler<List<String>> {
         public ListString() {
             super(List.class);
+        }
+
+        public ListString(Class<?> type) {
+            super(type);
         }
         
         @Override
