@@ -1,4 +1,4 @@
-package com.marine.manage.config;
+package com.marine.manage.service;
 
 import cn.dev33.satoken.stp.StpInterface;
 import com.marine.manage.mapper.AuthenticationMapper;

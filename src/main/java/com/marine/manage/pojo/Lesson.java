@@ -26,7 +26,7 @@ public class Lesson {
     private int durationWeeks; // 课程持续时间（周）
     
     @TableField("is_free")
-    private boolean isFree;
+    private boolean free;
     
     @TableField("enrolled_count")
     private int enrolledCount;

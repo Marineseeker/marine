@@ -29,9 +29,6 @@ public class UserService {
         return userMapper.getAllUsers();
     }
 
-    /**
-     * 用户登录 - 只读事务
-     */
     public Map<String, Object> login(LoginRequest loginRequest) {
         String email = loginRequest.getEmail();
         String password = loginRequest.getPassword();
@@ -50,6 +47,7 @@ public class UserService {
         StpUtil.login(user.getId());
         log.info("用户登录成功: {}", user.getId());
 
+        // 用Map返回用户名与 token
         Map<String, Object> loginRes = new HashMap<>();
         loginRes.put("token", StpUtil.getTokenValue());
         loginRes.put("user", user);

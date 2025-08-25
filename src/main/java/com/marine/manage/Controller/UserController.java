@@ -32,12 +32,8 @@ public class UserController {
     @TrackTime
     @PostMapping("/login")
     public Result<Map<String, Object>> login(@RequestBody @Valid LoginRequest loginRequest) {
-        try {
-            Map<String, Object> loginRes = userService.login(loginRequest);
-            return Result.success(loginRes);
-        } catch (RuntimeException e) {
-            return Result.error(e.getMessage());
-        }
+        Map<String, Object> loginRes = userService.login(loginRequest);
+        return Result.success(loginRes);
     }
 
     @PostMapping("/logout")

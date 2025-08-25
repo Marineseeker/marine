@@ -12,7 +12,7 @@
         <result property="createdAt" column="created_at"/>
         <result property="difficulty" column="difficulty"/>
         <result property="durationWeeks" column="duration_weeks"/>
-        <result property="isFree" column="is_free"/>
+        <result property="free" column="is_free"/>
         <result property="enrolledCount" column="enrolled_count"/>
         <result property="objectives" column="objectives"
                 typeHandler="com.marine.manage.utils.TypHandler$ListString"/>
