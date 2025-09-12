@@ -20,7 +20,7 @@ public class LessonController {
     private final RedisTemplate<String, Object> redisTemplate;
 
     @SaCheckRole("admin")
-    @GetMapping("/lessons")
+    @GetMapping("/getAllLessons")
     public Result<List<Lesson>> getAllLessons() {
         try {
             List<Lesson> lessons = lessonService.getAllLessons();
@@ -56,8 +56,8 @@ public class LessonController {
     }
 
     @TrackTime
-    @GetMapping("/lessons/{id}")
-    public Result<Lesson> getLessonById(@PathVariable int id) {
+    @GetMapping("/lessons")
+    public Result<Lesson> getLessonById(@RequestParam int id) {
         try{
             Lesson lesson = lessonService.getLessonById(id);
             return Result.success(lesson);
@@ -69,7 +69,7 @@ public class LessonController {
     /**
      * 创建课程 - 演示事务
      */
-    @PostMapping("/lessons")
+    @PostMapping("/createLessons")
     public Result<String> createLesson(@RequestBody Lesson lesson) {
         try {
             String result = lessonService.createLesson(lesson);
@@ -130,6 +130,61 @@ public class LessonController {
             return Result.success("复杂课程操作成功");
         } catch (RuntimeException e) {
             return Result.error("复杂课程操作失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 异步批量处理课程
+     * 演示线程池在批量数据处理中的应用
+     */
+    @PostMapping("/lessons/async-batch-process")
+    public Result<String> asyncBatchProcessLessons(@RequestBody List<Lesson> lessons) {
+        try {
+            if (lessons == null || lessons.isEmpty()) {
+                return Result.error("课程列表不能为空");
+            }
+
+            // 启动异步批量处理
+            lessonService.asyncBatchProcessLessons(lessons);
+
+            return Result.success("异步批量处理任务已启动，共 " + lessons.size() + " 门课程");
+
+        } catch (Exception e) {
+            return Result.error("启动异步批量处理失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 异步生成课程报告
+     * 演示线程池在报告生成中的应用
+     */
+    @PostMapping("/lessons/async-report")
+    public Result<String> asyncGenerateReport() {
+        try {
+            // 启动异步报告生成
+            lessonService.asyncGenerateLessonReport();
+
+            return Result.success("课程报告生成任务已启动，请稍后查看结果");
+
+        } catch (Exception e) {
+            return Result.error("启动报告生成失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 异步同步用户课程数据
+     * 演示线程池在数据同步中的应用
+     */
+    @PostMapping("/lessons/async-sync/{userId}")
+    public Result<String> asyncSyncUserLessons(@PathVariable int userId) {
+        try {
+            // 启动异步数据同步
+            lessonService.asyncSyncLessonData(userId);
+
+            return Result.success("用户课程数据同步任务已启动，用户ID: " + userId);
+
+        } catch (Exception e) {
+            return Result.error("启动数据同步失败: " + e.getMessage());
         }
     }
 }

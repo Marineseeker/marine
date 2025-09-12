@@ -5,11 +5,14 @@ import com.marine.manage.mapper.LessonMapper;
 import com.marine.manage.pojo.Lesson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -229,4 +232,135 @@ public class LessonService {
         log.info("额外操作执行成功");
     }
 
+    /**
+     * 异步批量处理课程数据
+     * 使用线程池进行并发处理，提高性能
+     */
+    @Async("dataProcessExecutor")
+    public CompletableFuture<String> asyncBatchProcessLessons(List<Lesson> lessons) {
+        try {
+            log.info("开始异步批量处理课程，数量: {} - 线程: {}", lessons.size(), Thread.currentThread().getName());
+
+            int successCount = 0;
+            int failCount = 0;
+
+            for (Lesson lesson : lessons) {
+                try {
+                    // 模拟课程数据处理
+                    processLessonData(lesson);
+                    successCount++;
+                    log.debug("课程处理成功: {}", lesson.getTitle());
+                } catch (Exception e) {
+                    failCount++;
+                    log.warn("课程处理失败: {}", lesson.getTitle(), e);
+                }
+            }
+
+            String result = String.format("异步批量处理完成 - 成功: %d, 失败: %d", successCount, failCount);
+            log.info("{} - 线程: {}", result, Thread.currentThread().getName());
+
+            return CompletableFuture.completedFuture(result);
+
+        } catch (Exception e) {
+            log.error("异步批量处理失败", e);
+            return CompletableFuture.completedFuture("批量处理失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 异步生成课程统计报告
+     * 使用线程池处理CPU密集型统计计算
+     */
+    @Async("dataProcessExecutor")
+    public CompletableFuture<String> asyncGenerateLessonReport() {
+        try {
+            log.info("开始异步生成课程报告 - 线程: {}", Thread.currentThread().getName());
+
+            // 获取所有课程数据
+            List<Lesson> lessons = getAllLessons();
+
+            // 模拟统计计算
+            int totalLessons = lessons.size();
+            long processingTime = calculateReportMetrics(lessons);
+
+            String report = String.format(
+                "课程统计报告\n" +
+                "- 总课程数: %d\n" +
+                "- 处理时间: %d毫秒\n" +
+                "- 生成时间: %s\n" +
+                "- 处理线程: %s",
+                totalLessons, processingTime,
+                java.time.LocalDateTime.now().toString(),
+                Thread.currentThread().getName()
+            );
+
+            log.info("课程报告生成完成 - 线程: {}", Thread.currentThread().getName());
+            return CompletableFuture.completedFuture(report);
+
+        } catch (Exception e) {
+            log.error("异步生成课程报告失败", e);
+            return CompletableFuture.completedFuture("报告生成失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 异步课程数据同步
+     * 使用线程池处理数据同步任务
+     */
+    @Async("asyncTaskExecutor")
+    public CompletableFuture<String> asyncSyncLessonData(int userId) {
+        try {
+            log.info("开始异步同步用户课程数据, 用户ID: {} - 线程: {}", userId, Thread.currentThread().getName());
+
+            // 获取用户课程
+            List<Lesson> userLessons = getLessonsByUserId(userId);
+
+            // 模拟数据同步过程
+            for (Lesson lesson : userLessons) {
+                // 模拟网络请求或数据库操作
+                TimeUnit.MILLISECONDS.sleep(100);
+                log.debug("同步课程数据: {}", lesson.getTitle());
+            }
+
+            String result = String.format("用户 %d 的课程数据同步完成，共同步 %d 门课程", userId, userLessons.size());
+            log.info("{} - 线程: {}", result, Thread.currentThread().getName());
+
+            return CompletableFuture.completedFuture(result);
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.error("课程数据同步被中断, 用户ID: {}", userId, e);
+            return CompletableFuture.completedFuture("数据同步被中断");
+        } catch (Exception e) {
+            log.error("异步同步课程数据失败, 用户ID: {}", userId, e);
+            return CompletableFuture.completedFuture("数据同步失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 处理单个课程数据
+     */
+    private void processLessonData(Lesson lesson) throws Exception {
+        // 模拟复杂的数据处理逻辑
+        if (lesson.getTitle() == null || lesson.getTitle().trim().isEmpty()) {
+            throw new Exception("课程标题不能为空");
+        }
+
+        // 模拟处理时间
+        TimeUnit.MILLISECONDS.sleep(50);
+    }
+
+    /**
+     * 计算报告指标
+     */
+    private long calculateReportMetrics(List<Lesson> lessons) {
+        long startTime = System.currentTimeMillis();
+
+        // 模拟复杂的统计计算
+        for (int i = 0; i < lessons.size() * 100; i++) {
+            Math.sqrt(i);
+        }
+
+        return System.currentTimeMillis() - startTime;
+    }
 }

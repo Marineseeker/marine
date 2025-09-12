@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/manage
     username: root
-    password: Marine1235689412
+    password: 1235689412
     driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     redis:
