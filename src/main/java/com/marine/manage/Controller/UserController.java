@@ -8,13 +8,12 @@ import com.marine.manage.pojo.dto.LoginRequest;
 import com.marine.manage.pojo.dto.RegisterRequest;
 import com.marine.manage.service.UserService;
 import jakarta.validation.Valid;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,7 +21,9 @@ public class UserController {
 
     private final UserService userService;
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final Logger logger = LoggerFactory.getLogger(
+        UserController.class
+    );
 
     @GetMapping("/userlist")
     public List<User> getAllUsers() {
@@ -31,7 +32,9 @@ public class UserController {
 
     @TrackTime
     @PostMapping("/login")
-    public Result<Map<String, Object>> login(@RequestBody @Valid LoginRequest loginRequest) {
+    public Result<Map<String, Object>> login(
+        @RequestBody @Valid LoginRequest loginRequest
+    ) {
         Map<String, Object> loginRes = userService.login(loginRequest);
         return Result.success(loginRes);
     }
@@ -47,7 +50,9 @@ public class UserController {
     }
 
     @PostMapping("register")
-    public Result<String> register(@RequestBody @Valid RegisterRequest registerRequest) {
+    public Result<String> register(
+        @RequestBody @Valid RegisterRequest registerRequest
+    ) {
         try {
             logger.info("Register request: {}", registerRequest);
             String result = userService.register(registerRequest);
