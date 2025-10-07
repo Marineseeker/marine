@@ -44,14 +44,13 @@ public class WebSocketChatController {
 
         // convertAndSendToUser 是Spring WebSocket中用于向特定用户发送消息的核心方法
         /*
-          原始调用：convertAndSendToUser("张三", "queue/messages", message)
-          实际发送到：/user/张三/queue/messages
+         * 原始调用：convertAndSendToUser("张三", "queue/messages", message)
+         * 实际发送到：/user/张三/queue/messages
          */
         messagingTemplate.convertAndSendToUser(
                 chatMessage.getReceiver(),
                 "queue/messages",
-                chatMessage
-        );
+                chatMessage);
     }
 
     @MessageMapping("/chat.addUser")
@@ -60,13 +59,16 @@ public class WebSocketChatController {
         String username = chatMessage.getSender();
         // StompHeaderAccessor 是Spring WebSocket中用于访问STOMP协议消息头和会话信息的核心工具类
         /*
-            getSessionId(): 获取WebSocket会话的唯一标识符
-            getSessionAttributes(): 获取会话属性Map，用于存储会话级别的数据
-            getUser(): 获取当前认证用户信息
-            getDestination(): 获取消息目的地
-            wrap(Message): 静态方法，包装Message对象为StompHeaderAccessor
+         * getSessionId(): 获取WebSocket会话的唯一标识符
+         * getSessionAttributes(): 获取会话属性Map，用于存储会话级别的数据
+         * getUser(): 获取当前认证用户信息
+         * getDestination(): 获取消息目的地
+         * wrap(Message): 静态方法，包装Message对象为StompHeaderAccessor
          */
-        headerAccessor.getSessionAttributes().put("username", username);
+        Map<String,Object> sessionAttributes = headerAccessor.getSessionAttributes();
+        if (sessionAttributes != null) {
+            sessionAttributes.put("username", username);
+        }
 
         String sessionId = headerAccessor.getSessionId();
         onlineUserService.userOnline(username, sessionId);

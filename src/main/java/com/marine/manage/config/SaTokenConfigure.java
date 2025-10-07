@@ -17,6 +17,7 @@ public class SaTokenConfigure implements WebMvcConfigurer {
                     SaRouter.match("/**") // 拦截的路径
                             .check(_ -> StpUtil.checkLogin()); // 校验规则：是否登录
                 })).addPathPatterns("/**") // 拦截路径
-                .excludePathPatterns("/login", "/register", "/api/chat/*", "/chat/online-users"); // 排除路径，添加 stream 接口
+                .excludePathPatterns("/login", "/register", "/chat/*"); // 只排除不需要登录的接口
+                // 注意：/chat/knowledge-stream 等其他接口都需要登录验证
     }
 }

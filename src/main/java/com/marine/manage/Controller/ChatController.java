@@ -22,7 +22,7 @@ import java.util.Map;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/chat")
+@RequestMapping("/chat")
 @RequiredArgsConstructor
 public class ChatController {
 
@@ -243,12 +243,9 @@ public class ChatController {
      */
     @PostMapping("/knowledge-stream")
     public SseEmitter knowledgeBasedStreamChat(@RequestBody KnowledgeChatRequest request) {
-        // 手动验证登录状态
-        if (!StpUtil.isLogin()) {
-            throw new IllegalStateException("未登录，无法访问");
-        }
 
-        String userId = StpUtil.getLoginIdAsString();
+        // 在异步操作前提取用户ID，避免异步线程中SaToken上下文丢失
+        final String userId = StpUtil.getLoginIdAsString();
         SseEmitter emitter = new SseEmitter(0L);
 
         log.info("收到知识库流式请求: {} from user: {}", request.getMessage(), userId);
