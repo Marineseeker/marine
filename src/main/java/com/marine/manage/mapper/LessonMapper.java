@@ -8,18 +8,18 @@ import java.util.List;
 @Mapper
 public interface LessonMapper {
 
-    List<Lesson> getAllLessons();
+  List<Lesson> getAllLessons();
 
-    List<Lesson> getLessonsByUserId(int userId);
+  List<Lesson> getLessonsByUserId(int userId);
 
-    void insertLesson(Lesson lesson);
+  void insertLesson(Lesson lesson);
 
-    void updateLessonTitle(@Param("lessonId") int lessonId, @Param("newTitle") String newTitle);
+  void updateLessonTitle(@Param("lessonId") int lessonId, @Param("newTitle") String newTitle);
 
-    void deleteLesson(int lessonId);
+  void deleteLesson(int lessonId);
 
-    void deleteUserLessonRefs(int lessonId);
+  void deleteUserLessonRefs(int lessonId);
 
 
-    Lesson getLessonById(int id);
+  Lesson getLessonById(int id);
 }

@@ -18,27 +18,27 @@ import java.time.LocalDateTime;
 @Component
 @RequiredArgsConstructor
 public class WebSocketEventListener {
-    private final SimpMessagingTemplate messagingTemplate;
-    private final OnlineUserService onlineUserService;
+  private final SimpMessagingTemplate messagingTemplate;
+  private final OnlineUserService onlineUserService;
 
-    @EventListener
-    public void handleWebSocketConnectListener(SessionConnectedEvent event) {
-        log.info("Received a new web socket connection");
-    }
+  @EventListener
+  public void handleWebSocketConnectListener(SessionConnectedEvent event) {
+    log.info("Received a new web socket connection");
+  }
 
-    @EventListener
-    public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
-        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-        String username = (String) headerAccessor.getSessionAttributes().get("username");
-        if(username != null) {
-            log.info("user {} disconnected", username);
-            onlineUserService.userOffline(username);
-            ChatMessage chatMessage = new ChatMessage();
-            chatMessage.setType(ChatMessage.MessageType.LEAVE);
-            chatMessage.setSender(username);
-            chatMessage.setContent(username + " 离开了聊天室");
-            chatMessage.setTimestamp(LocalDateTime.now());
-            messagingTemplate.convertAndSend("/topic/public", chatMessage);
-        }
+  @EventListener
+  public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
+    StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+    String username = (String) headerAccessor.getSessionAttributes().get("username");
+    if (username != null) {
+      log.info("user {} disconnected", username);
+      onlineUserService.userOffline(username);
+      ChatMessage chatMessage = new ChatMessage();
+      chatMessage.setType(ChatMessage.MessageType.LEAVE);
+      chatMessage.setSender(username);
+      chatMessage.setContent(username + " 离开了聊天室");
+      chatMessage.setTimestamp(LocalDateTime.now());
+      messagingTemplate.convertAndSend("/topic/public", chatMessage);
     }
+  }
 }

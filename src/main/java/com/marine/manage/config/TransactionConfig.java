@@ -16,24 +16,24 @@ import javax.sql.DataSource;
 @EnableTransactionManagement
 public class TransactionConfig {
 
-    /**
-     * 配置事务管理器
-     * 这里使用默认的DataSourceTransactionManager，适用于单数据源
-     */
-    @Bean
-    public PlatformTransactionManager transactionManager(DataSource dataSource) {
-        DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
-        transactionManager.setDataSource(dataSource);
-        
-        // 设置默认超时时间（秒）
-        transactionManager.setDefaultTimeout(30);
-        
-        // 设置是否允许嵌套事务
-        transactionManager.setNestedTransactionAllowed(true);
-        
-        // 设置是否在回滚时抛出异常
-        transactionManager.setRollbackOnCommitFailure(true);
-        
-        return transactionManager;
-    }
+  /**
+   * 配置事务管理器
+   * 这里使用默认的DataSourceTransactionManager，适用于单数据源
+   */
+  @Bean
+  public PlatformTransactionManager transactionManager(DataSource dataSource) {
+    DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
+    transactionManager.setDataSource(dataSource);
+
+    // 设置默认超时时间（秒）
+    transactionManager.setDefaultTimeout(30);
+
+    // 设置是否允许嵌套事务
+    transactionManager.setNestedTransactionAllowed(true);
+
+    // 设置是否在回滚时抛出异常
+    transactionManager.setRollbackOnCommitFailure(true);
+
+    return transactionManager;
+  }
 } 

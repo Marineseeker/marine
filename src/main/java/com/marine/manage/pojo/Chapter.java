@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Chapter {
-    private String title;
-    private String status;
-    private int duration;
+  private String title;
+  private String status;
+  private int duration;
 }

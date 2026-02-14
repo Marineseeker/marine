@@ -21,45 +21,45 @@ import java.security.Principal;
 @Component
 public class WebSocketChannelInterceptor implements ChannelInterceptor {
 
+  @Override
+  @Nullable
+  public Message<?> preSend(@NonNull Message<?> message, @NonNull MessageChannel channel) {
+
+    StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+
+    if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
+      // 从WebSocket会话属性中获取用户名
+      String username = accessor.getFirstNativeHeader("username");
+      if (username != null) {
+        Principal userPrincipal = new WebSocketUserPrincipal(username);
+        accessor.setUser(userPrincipal);
+        log.info("从STOMP headers设置WebSocket用户身份: {}", username);
+      } else {
+        log.warn("STOMP headers中未提供用户名");
+      }
+    }
+
+    return message;
+  }
+
+  /**
+   * 自定义用户主体类
+   */
+  private static class WebSocketUserPrincipal implements Principal {
+    private final String name;
+
+    public WebSocketUserPrincipal(String name) {
+      this.name = name;
+    }
+
     @Override
-    @Nullable
-    public Message<?> preSend(@NonNull Message<?> message, @NonNull MessageChannel channel) {
-
-        StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-        
-        if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
-            // 从WebSocket会话属性中获取用户名
-            String username = accessor.getFirstNativeHeader("username");
-            if(username != null) {
-                Principal userPrincipal = new WebSocketUserPrincipal(username);
-                accessor.setUser(userPrincipal);
-                log.info("从STOMP headers设置WebSocket用户身份: {}", username);
-            } else {
-                log.warn("STOMP headers中未提供用户名");
-            }
-        }
-        
-        return message;
+    public String getName() {
+      return name;
     }
 
-    /**
-     * 自定义用户主体类
-     */
-    private static class WebSocketUserPrincipal implements Principal {
-        private final String name;
-
-        public WebSocketUserPrincipal(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public String toString() {
-            return "WebSocketUserPrincipal{name='" + name + "'}";
-        }
+    @Override
+    public String toString() {
+      return "WebSocketUserPrincipal{name='" + name + "'}";
     }
+  }
 }

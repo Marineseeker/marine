@@ -10,14 +10,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class SaTokenConfigure implements WebMvcConfigurer {
-    @Override
-    public void addInterceptors(@NonNull InterceptorRegistry registry) {
-        // 注册 Sa-Token 拦截器，定义拦截规则
-        registry.addInterceptor(new SaInterceptor(_ -> {
-                    SaRouter.match("/**") // 拦截的路径
-                            .check(_ -> StpUtil.checkLogin()); // 校验规则：是否登录
-                })).addPathPatterns("/**") // 拦截路径
-                .excludePathPatterns("/login", "/register", "/chat/*"); // 只排除不需要登录的接口
-                // 注意：/chat/knowledge-stream 等其他接口都需要登录验证
-    }
+  @Override
+  public void addInterceptors(@NonNull InterceptorRegistry registry) {
+    // 注册 Sa-Token 拦截器，定义拦截规则
+    registry.addInterceptor(new SaInterceptor(_ -> {
+              SaRouter.match("/**") // 拦截的路径
+                      .check(_ -> StpUtil.checkLogin()); // 校验规则：是否登录
+            })).addPathPatterns("/**") // 拦截路径
+            .excludePathPatterns("/login", "/register", "/chat/*"); // 只排除不需要登录的接口
+    // 注意：/chat/knowledge-stream 等其他接口都需要登录验证
+  }
 }

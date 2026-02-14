@@ -6,5 +6,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME) // 注解的生命周期
 @Documented // 是否生成到 Javadoc中
 public @interface TrackTime {
-    String value() default "";
+  String value() default "";
 }

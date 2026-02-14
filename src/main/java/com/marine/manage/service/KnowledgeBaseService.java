@@ -18,75 +18,75 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class KnowledgeBaseService {
 
-    private final KnowledgeBaseMapper knowledgeBaseMapper;
+  private final KnowledgeBaseMapper knowledgeBaseMapper;
 
-    /**
-     * 根据用户问题搜索相关知识
-     */
-    public List<KnowledgeBase> searchRelevantKnowledge(String userMessage) {
-        log.info("搜索相关知识，用户问题: {}", userMessage);
+  /**
+   * 根据用户问题搜索相关知识
+   */
+  public List<KnowledgeBase> searchRelevantKnowledge(String userMessage) {
+    log.info("搜索相关知识，用户问题: {}", userMessage);
 
-        // 提取关键词进行搜索
-        List<KnowledgeBase> results = knowledgeBaseMapper.searchByKeyword(userMessage);
+    // 提取关键词进行搜索
+    List<KnowledgeBase> results = knowledgeBaseMapper.searchByKeyword(userMessage);
 
-        // 如果直接搜索没有结果，尝试分词搜索
-        if (results.isEmpty()) {
-            results = searchByTokens(userMessage);
-        }
-
-        log.info("找到 {} 条相关知识", results.size());
-        return results;
+    // 如果直接搜索没有结果，尝试分词搜索
+    if (results.isEmpty()) {
+      results = searchByTokens(userMessage);
     }
 
-    /**
-     * 分词搜索
-     */
-    private List<KnowledgeBase> searchByTokens(String message) {
-        // 简单的分词逻辑，可以后续集成更复杂的分词器
-        String[] tokens = {"选课", "成绩", "考试", "学籍", "密码", "登录", "课程", "教师", "学分"};
+    log.info("找到 {} 条相关知识", results.size());
+    return results;
+  }
 
-        for (String token : tokens) {
-            if (message.contains(token)) {
-                List<KnowledgeBase> results = knowledgeBaseMapper.searchByKeyword(token);
-                if (!results.isEmpty()) {
-                    return results;
-                }
-            }
+  /**
+   * 分词搜索
+   */
+  private List<KnowledgeBase> searchByTokens(String message) {
+    // 简单的分词逻辑，可以后续集成更复杂的分词器
+    String[] tokens = {"选课", "成绩", "考试", "学籍", "密码", "登录", "课程", "教师", "学分"};
+
+    for (String token : tokens) {
+      if (message.contains(token)) {
+        List<KnowledgeBase> results = knowledgeBaseMapper.searchByKeyword(token);
+        if (!results.isEmpty()) {
+          return results;
         }
-        return List.of();
+      }
+    }
+    return List.of();
+  }
+
+  /**
+   * 构建包含知识库信息的系统提示词
+   */
+  public String buildSystemPromptWithKnowledge(String userMessage) {
+    List<KnowledgeBase> knowledgeList = searchRelevantKnowledge(userMessage);
+
+    if (knowledgeList.isEmpty()) {
+      return getDefaultSystemPrompt();
     }
 
-    /**
-     * 构建包含知识库信息的系统提示词
-     */
-    public String buildSystemPromptWithKnowledge(String userMessage) {
-        List<KnowledgeBase> knowledgeList = searchRelevantKnowledge(userMessage);
+    StringBuilder prompt = new StringBuilder();
+    prompt.append(getDefaultSystemPrompt()).append("\n\n");
+    prompt.append("以下是相关的教务系统操作流程和知识库信息，请参考这些信息回答用户问题：\n\n");
 
-        if (knowledgeList.isEmpty()) {
-            return getDefaultSystemPrompt();
-        }
-
-        StringBuilder prompt = new StringBuilder();
-        prompt.append(getDefaultSystemPrompt()).append("\n\n");
-        prompt.append("以下是相关的教务系统操作流程和知识库信息，请参考这些信息回答用户问题：\n\n");
-
-        for (KnowledgeBase kb : knowledgeList) {
-            prompt.append("【").append(kb.getTitle()).append("】\n");
-            prompt.append("分类：").append(kb.getCategory()).append("\n");
-            prompt.append("内容：").append(kb.getContent()).append("\n");
-            if (kb.getKeywords() != null && !kb.getKeywords().isEmpty()) {
-                prompt.append("关键词：").append(kb.getKeywords()).append("\n");
-            }
-            prompt.append("\n");
-        }
-
-        prompt.append("请基于以上知识库信息，结合你的理解，为用户提供准确、详细的回答。");
-
-        return prompt.toString();
+    for (KnowledgeBase kb : knowledgeList) {
+      prompt.append("【").append(kb.getTitle()).append("】\n");
+      prompt.append("分类：").append(kb.getCategory()).append("\n");
+      prompt.append("内容：").append(kb.getContent()).append("\n");
+      if (kb.getKeywords() != null && !kb.getKeywords().isEmpty()) {
+        prompt.append("关键词：").append(kb.getKeywords()).append("\n");
+      }
+      prompt.append("\n");
     }
 
-    private String getDefaultSystemPrompt() {
-        return """
+    prompt.append("请基于以上知识库信息，结合你的理解，为用户提供准确、详细的回答。");
+
+    return prompt.toString();
+  }
+
+  private String getDefaultSystemPrompt() {
+    return """
             你是一个高校教务系统网站的智能助手。
             你的目标是帮助师生快速解决与教务相关的问题，提供简洁、准确的中文回答。
             你可以协助的范围包括但不限于：
@@ -103,58 +103,58 @@ public class KnowledgeBaseService {
             3. 遇到涉及隐私或权限的数据（如具体成绩、身份证号），请提示用户到系统对应模块查询，不要直接给出真实数据。
             4. 当问题超出教务范围时，请礼貌说明自己能力有限，并建议联系学校相关部门。
             """;
+  }
+
+  /**
+   * 添加知识条目
+   */
+  public boolean addKnowledge(KnowledgeBase knowledgeBase) {
+    knowledgeBase.setCreateTime(LocalDateTime.now());
+    knowledgeBase.setUpdateTime(LocalDateTime.now());
+    if (knowledgeBase.getEnabled() == null) {
+      knowledgeBase.setEnabled(true);
+    }
+    if (knowledgeBase.getPriority() == null) {
+      knowledgeBase.setPriority(1);
     }
 
-    /**
-     * 添加知识条目
-     */
-    public boolean addKnowledge(KnowledgeBase knowledgeBase) {
-        knowledgeBase.setCreateTime(LocalDateTime.now());
-        knowledgeBase.setUpdateTime(LocalDateTime.now());
-        if (knowledgeBase.getEnabled() == null) {
-            knowledgeBase.setEnabled(true);
-        }
-        if (knowledgeBase.getPriority() == null) {
-            knowledgeBase.setPriority(1);
-        }
+    return knowledgeBaseMapper.insert(knowledgeBase) > 0;
+  }
 
-        return knowledgeBaseMapper.insert(knowledgeBase) > 0;
-    }
+  /**
+   * 更新知识条目
+   */
+  public boolean updateKnowledge(KnowledgeBase knowledgeBase) {
+    knowledgeBase.setUpdateTime(LocalDateTime.now());
+    return knowledgeBaseMapper.updateById(knowledgeBase) > 0;
+  }
 
-    /**
-     * 更新知识条目
-     */
-    public boolean updateKnowledge(KnowledgeBase knowledgeBase) {
-        knowledgeBase.setUpdateTime(LocalDateTime.now());
-        return knowledgeBaseMapper.updateById(knowledgeBase) > 0;
-    }
+  /**
+   * 删除知识条目
+   */
+  public boolean deleteKnowledge(Long id) {
+    return knowledgeBaseMapper.deleteById(id) > 0;
+  }
 
-    /**
-     * 删除知识条目
-     */
-    public boolean deleteKnowledge(Long id) {
-        return knowledgeBaseMapper.deleteById(id) > 0;
-    }
+  /**
+   * 查询所有启用的知识条目
+   */
+  public List<KnowledgeBase> getAllEnabled() {
+    return knowledgeBaseMapper.selectAllEnabled();
+  }
 
-    /**
-     * 查询所有启用的知识条目
-     */
-    public List<KnowledgeBase> getAllEnabled() {
-        return knowledgeBaseMapper.selectAllEnabled();
-    }
+  /**
+   * 分页查询知识条目
+   */
+  public List<KnowledgeBase> getKnowledgeByPage(int page, int size) {
+    int offset = (page - 1) * size;
+    return knowledgeBaseMapper.selectByPage(offset, size);
+  }
 
-    /**
-     * 分页查询知识条目
-     */
-    public List<KnowledgeBase> getKnowledgeByPage(int page, int size) {
-        int offset = (page - 1) * size;
-        return knowledgeBaseMapper.selectByPage(offset, size);
-    }
-
-    /**
-     * 统计总数
-     */
-    public int getTotalCount() {
-        return knowledgeBaseMapper.count();
-    }
+  /**
+   * 统计总数
+   */
+  public int getTotalCount() {
+    return knowledgeBaseMapper.count();
+  }
 }

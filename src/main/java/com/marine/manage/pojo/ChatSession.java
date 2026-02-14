@@ -17,24 +17,24 @@ import java.util.List;
 @Builder
 public class ChatSession {
 
-    private String sessionId;
-    private String userId;
-    private String title;
-    private LocalDateTime createTime;
-    private LocalDateTime lastActiveTime;
-    private List<ChatMessage> messages;
+  private String sessionId;
+  private String userId;
+  private String title;
+  private LocalDateTime createTime;
+  private LocalDateTime lastActiveTime;
+  private List<ChatMessage> messages;
 
-    /**
-     * 对话消息实体类
-     */
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class ChatMessage {
-        private String role; // "user" 或 "assistant"
-        private String content;
-        private LocalDateTime timestamp;
-        private String messageType; // "text", "knowledge_based" 等
-    }
+  /**
+   * 对话消息实体类
+   */
+  @Data
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Builder
+  public static class ChatMessage {
+    private String role; // "user" 或 "assistant"
+    private String content;
+    private LocalDateTime timestamp;
+    private String messageType; // "text", "knowledge_based" 等
+  }
 }

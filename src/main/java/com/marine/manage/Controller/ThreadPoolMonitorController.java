@@ -18,63 +18,63 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ThreadPoolMonitorController {
 
-    private final ThreadPoolManagementService threadPoolManagementService;
+  private final ThreadPoolManagementService threadPoolManagementService;
 
-    /**
-     * 获取所有线程池的状态信息
-     */
-    @GetMapping("/status")
-    public Result<Map<String, Map<String, Object>>> getThreadPoolStatus() {
-        try {
-            Map<String, Map<String, Object>> status = threadPoolManagementService.getAllThreadPoolStatus();
-            log.info("获取线程池状态信息成功");
-            return Result.success(status);
-        } catch (Exception e) {
-            log.error("获取线程池状态失败", e);
-            return Result.error("获取线程池状态失败: " + e.getMessage());
-        }
+  /**
+   * 获取所有线程池的状态信息
+   */
+  @GetMapping("/status")
+  public Result<Map<String, Map<String, Object>>> getThreadPoolStatus() {
+    try {
+      Map<String, Map<String, Object>> status = threadPoolManagementService.getAllThreadPoolStatus();
+      log.info("获取线程池状态信息成功");
+      return Result.success(status);
+    } catch (Exception e) {
+      log.error("获取线程池状态失败", e);
+      return Result.error("获取线程池状态失败: " + e.getMessage());
     }
+  }
 
-    /**
-     * 获取线程池健康状态
-     */
-    @GetMapping("/health")
-    public Result<Map<String, String>> getThreadPoolHealth() {
-        try {
-            Map<String, String> health = threadPoolManagementService.getThreadPoolHealth();
-            log.info("获取线程池健康状态成功");
-            return Result.success(health);
-        } catch (Exception e) {
-            log.error("获取线程池健康状态失败", e);
-            return Result.error("获取线程池健康状态失败: " + e.getMessage());
-        }
+  /**
+   * 获取线程池健康状态
+   */
+  @GetMapping("/health")
+  public Result<Map<String, String>> getThreadPoolHealth() {
+    try {
+      Map<String, String> health = threadPoolManagementService.getThreadPoolHealth();
+      log.info("获取线程池健康状态成功");
+      return Result.success(health);
+    } catch (Exception e) {
+      log.error("获取线程池健康状态失败", e);
+      return Result.error("获取线程池健康状态失败: " + e.getMessage());
     }
+  }
 
-    /**
-     * 动态调整线程池大小
-     */
-    @PostMapping("/adjust")
-    public Result<String> adjustThreadPool(@RequestParam String poolName,
-                                          @RequestParam int coreSize,
-                                          @RequestParam int maxSize) {
-        try {
-            if (coreSize <= 0 || maxSize <= 0 || coreSize > maxSize) {
-                return Result.error("线程池参数无效：核心大小和最大大小必须大于0，且核心大小不能大于最大大小");
-            }
+  /**
+   * 动态调整线程池大小
+   */
+  @PostMapping("/adjust")
+  public Result<String> adjustThreadPool(@RequestParam String poolName,
+                                         @RequestParam int coreSize,
+                                         @RequestParam int maxSize) {
+    try {
+      if (coreSize <= 0 || maxSize <= 0 || coreSize > maxSize) {
+        return Result.error("线程池参数无效：核心大小和最大大小必须大于0，且核心大小不能大于最大大小");
+      }
 
-            boolean success = threadPoolManagementService.adjustThreadPoolSize(poolName, coreSize, maxSize);
+      boolean success = threadPoolManagementService.adjustThreadPoolSize(poolName, coreSize, maxSize);
 
-            if (success) {
-                String message = String.format("线程池 %s 调整成功 - 核心大小: %d, 最大大小: %d",
-                        poolName, coreSize, maxSize);
-                log.info(message);
-                return Result.success(message);
-            } else {
-                return Result.error("线程池调整失败：未找到指定的线程池 " + poolName);
-            }
-        } catch (Exception e) {
-            log.error("调整线程池失败", e);
-            return Result.error("调整线程池失败: " + e.getMessage());
-        }
+      if (success) {
+        String message = String.format("线程池 %s 调整成功 - 核心大小: %d, 最大大小: %d",
+                poolName, coreSize, maxSize);
+        log.info(message);
+        return Result.success(message);
+      } else {
+        return Result.error("线程池调整失败：未找到指定的线程池 " + poolName);
+      }
+    } catch (Exception e) {
+      log.error("调整线程池失败", e);
+      return Result.error("调整线程池失败: " + e.getMessage());
     }
+  }
 }
